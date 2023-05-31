@@ -12,7 +12,7 @@ Paxvault is a command line offline password manager written in Python. It is an 
 2. **Password Manager Modules**
    - **Password Manager**: Store your passwords in an encrypted database.
      - Save usernames, passwords, and emails securely.
-     - Utilizes S[Imgur](https://i.imgur.com/vk8z0x7.png)QL database with AES-256 encryption.
+     - Utilizes SQL database with AES-256 encryption.
      - List saved logins.
      - Auto-copy passwords to the clipboard for convenience.
    - **Password Generation**: Generate super unique and strong passwords.
