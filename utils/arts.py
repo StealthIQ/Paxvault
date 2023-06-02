@@ -5,7 +5,7 @@ from rich.console import Console
 from rich import print as print
 from rich.prompt import Prompt
 import random
-from utils.just_banner import banner_art
+from just_banner import banner_art
 
 input = Prompt.ask
 
