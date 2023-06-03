@@ -1,5 +1,6 @@
 import os
 import getpass
+import fade
 import time 
 import webbrowser
 from datetime import datetime 
