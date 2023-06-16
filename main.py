@@ -9,7 +9,7 @@ from datetime import datetime
 from utils.password_quality_meter import Main_checker
 from utils.password_generator import password_generator
 from utils.passphrase_generator import passphrase_main
-from utils.sql_database import Passfx_Users_Add, Passfx_login_verify, testing
+from utils.sql_database import Passfx_Users_Add, Passfx_login_verify, sql_db_setting
 from utils.password_manager import pass_manager_main
 # Rich Console Color Lib------------------------------
 from rich.prompt import Prompt
@@ -158,7 +158,7 @@ def main():
                 register()
             elif choice == '3':
                 arts.banner()
-                testing()
+                sql_db_setting()
             elif choice == '4':
                 webbrowser.get('firefox').open('https://github.com/StealthIQ')
             elif choice == "q":
