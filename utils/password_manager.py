@@ -18,18 +18,27 @@ date_created = formatted_date_time
 
 console = Console()
 
-# try:
-DataBase_Config = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    passwd="root"
-    )
+def initiate_db_connection(username):
+    try:
+        passdb = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            passwd="root"
+        )
+        cursor = passdb.cursor()
 
-def intiate_db_connection(username):
+        # Create the user db if it doesn't exist
+        cursor.execute(f"CREATE DATABASE IF NOT EXISTS {username}_Database")
+        cursor.execute(f"USE {username}_Database")
+
+        return cursor, passdb    
+    except mysql.connector.Error as error:
+        print("Error connecting to the MySQL server:", error)
 
 def add_data(username):
-    # variable cursor
-    cursor = passdb.cursor()
+    # Creating a database for password manager
+    # Connect to db
+    cursor, passdb = initiate_db_connection(username)
 
     site_name = input("Enter the site name")
     site_url = input("Enter the site url")
@@ -50,6 +59,7 @@ def add_data(username):
 
     query = f"""
     INSERT INTO {username}_Table (site_name, site_url, site_username_email, site_password, date_time_created)
+        return None, None
     VALUES (%s, %s, %s, %s, %s)
     """
 
@@ -62,76 +72,65 @@ def add_data(username):
 
 
 # Option 1 - Check Saved Logins
-def get_data(username, print_table=False, get_query=False):
-    # Connect to the database``
-    passdb = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        passwd="root",
-        database=f"{username}_Database"
-        )
+def get_data(username):
+    # Connect to db
+    cursor, passdb = initiate_db_connection(username)
 
-    cursor = passdb.cursor()
-    if print_table:
-        # Execute the SQL statement to show the list of tables
-        cursor.execute("SHOW TABLES")
-        
-        # Fetch the results
-        tables = cursor.fetchall()
+    try:
+        # ------Prints User DB Table-----
+        print_table_now(cursor, username)
 
-        # Print the list of tables
-        for table in tables:
-          table_names = (table[0])
-          # print(table_names)
-        username_table = f"{username}_Table"
-        print(username_table)
-
-        if username_table is not None and username_table in table_names:
-            # Execute the SQL statement to select all rows from the table
-            cursor.execute(f"SELECT * FROM {username_table}")
-            
-            # Fetch the results
-            results = cursor.fetchall()
-
-            # Create a rich Table
-            table = Table(show_header=True, header_style="bold magenta")
-            table.add_column("ID", style="dim", width=4)
-            table.add_column("Site Name")
-            table.add_column("Site Url")
-            table.add_column("Username/Email")
-            table.add_column("Password")
-            table.add_column("Date & Time Created")
-            
-            # Add rows to the table
-            for row in results:
-                # table.add_row(str(row["ID"]), str(row["Username"]), str(row["Main key"]), str(row["Email Hash"]), str(row["E-Cipher Hash"]), str(row["Password Hash"]), str(row["P-Cipher Hash"]), str(row["D:T Created"]))
-                table.add_row(str(row[0]), str(row[1]), str(row[2]), str(row[3]), str(row[4]), str(row[5]))
-
-            # Print the table to the console
-            console.print(table)
-            time.sleep(4)
-    elif get_query:
+        # ------Gets Query Data --------
         # Execute the SQL statement to retrieve all rows from the table
         cursor.execute(f"SELECT * FROM {username}_Table")
+        # Fetch the results
+        results = cursor.fetchall()
+        cursor.close()
+        # print(results)
+        return results
+    # Returns False if no DB for the user
+    except mysql.connector.Error as error:
+        print(error)
+        return False
+
+
+def print_table_now(cursor, username):
+    # Execute the SQL statement to show the list of tables
+    cursor.execute("SHOW TABLES")
+
+    # Fetch the results
+    tables = cursor.fetchall()
+    table_names = [table[0] for table in tables]
+
+    username_table = f"{username}_Table"
+    if username_table is not None and username_table in table_names:
+        # Execute the SQL statement to select all rows from the table
+        cursor.execute(f"SELECT * FROM {username_table}")
 
         # Fetch the results
         results = cursor.fetchall()
 
-        cursor.close()
-        passdb.close()
+        # Create a rich Table
+        table = Table(show_header=True, header_style="bold magenta")
+        table.add_column("ID", style="dim", width=4)
+        table.add_column("Site Name")
+        table.add_column("Site Url")
+        table.add_column("Username/Email")
+        table.add_column("Password")
+        table.add_column("Date & Time Created")
 
-        # print(result)
-        return results
-    else:
-        print("invalid option")
-        time.sleep(3)
+        # Add rows to the table
+        for row in results:
+            table.add_row(str(row[0]), str(row[1]), str(row[2]), str(row[3]), str(row[4]), str(row[5]))
 
+        # Print the table to the console
+        console.print(table)
 
+        # time.sleep(4)
+
+# Main Funtion
 def pass_manager_main(username):
-    cursor = passdb.cursor()
-    
-    # Creating a database for password manager
-    cursor.execute(f"CREATE DATABASE IF NOT EXISTS {username}_Database")
+    cursor, passdb = initiate_db_connection(username)
     
     print("""
     [1] -[yellow] Check Saved Login[/yellow]
@@ -141,20 +140,24 @@ def pass_manager_main(username):
     """)
     user_choice = input("[green]Enter your choice ")
     
-    if user_choice == "1":Abvolvand
-        get_data(username, print_table=True)
-        print("""---------- Get Decrypted password -----------
-                                        Enter B to go back""")
-        get_id_site = int(input("Enter the ID of the site "))-1
-        username_query_value = get_data(username, get_query=True)
-        if get_id_site in username_query_value[0]:
-            print("Your Passsword is: " ,username_query_value[get_id_site][4])
+    if user_choice == "1":
+        results = get_data(username)
+
+        if results:
+            print("---------- Get Decrypted password -----------")
+            print("Enter B to go back")
+            get_id_site = int(input("Enter the ID of the site: ")) - 1
+
+            if 0 <= get_id_site < len(results):
+                password = results[get_id_site][4]
+                print("Your Password is:", password)
+            else:
+                print("Invalid site ID")
     elif user_choice == "2":
         add_data(username)
     elif user_choice == "3":
         delete_id(id)
     elif user_choice == "4":
-        # Execute the SQL statement to delete the database
         cursor.execute(f"DROP DATABASE {username}_Database")
         print(f"Successfully deleted database '{username}_Database'")
     else:
