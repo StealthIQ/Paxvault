@@ -76,7 +76,7 @@ def check_password_strength(password):
     return score
 
 # Main function shit
-def Main_checker():
+def Passoword_Checker():
     try:
         password = getpass.getpass(prompt="\n Enter your password → ", stream=None)
 
@@ -94,5 +94,5 @@ def Main_checker():
         exit()
 
 if __name__ == "__main__":
-    Main_checker()
+    Passoword_Checker()
 

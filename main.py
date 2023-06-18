@@ -1,12 +1,12 @@
 import os
-import arts
 # from utils.just_banner import *
 import getpass
 import time
 import webbrowser
 from datetime import datetime
 # Sub Folder Lib--------------------------------------
-from utils.password_quality_meter import Main_checker
+from utils.arts import *
+from utils.password_quality_meter import Passoword_Checker
 from utils.password_generator import password_generator
 from utils.passphrase_generator import passphrase_main
 from utils.sql_database import Passfx_Users_Add, Passfx_login_verify, sql_db_setting
@@ -70,22 +70,22 @@ def decrypt_password(encrypted_password_hex, key, iv):
 def Main_modules(username):
     try:
         while True:
-            arts.banner()
-            arts.Main_modules()
+            banner()
+            Main_modules_arts()
             choice = Prompt.ask(f'[yellow]    Enter your choice → [/yellow]')
             if choice == '1':
-                arts.banner()
+                banner()
                 pass_manager_main(username)
             elif choice == '2':
-                arts.banner()
+                banner()
                 password_generator()
                 # time.sleep(4)
             elif choice == '3':
-                arts.banner()
+                banner()
                 passphrase_main()
             elif choice == '4':
-                arts.banner()
-                Main_checker()
+                banner()
+                Passoword_Checker()
             elif choice == "Q" or choice == "q":
                 exit()
             elif choice == "B" or choice == 'b':
@@ -99,7 +99,7 @@ def Main_modules(username):
 
 # Function to login a user
 def login():
-    arts.banner()
+    banner()
     username = Prompt.ask('\t[x] Enter your username')
     password = getpass.getpass(prompt='\t[x] Enter the password :', stream=None)
     username_query_value = Passfx_login_verify(username)
@@ -111,18 +111,18 @@ def login():
             time.sleep(2)
             Main_modules(username)
         else:
-            arts.banner()
+            banner()
             print(f'\t[red] ⚠  Invalid password.')
             time.sleep(2)
     else:
-        arts.banner()
+        banner()
         print(f'\t[red] ⚠  Invalid username or password.')
         time.sleep(2)
 
 
 # Function to register a new user
 def register():
-    arts.banner()
+    banner()
     username = Prompt.ask('\t[x] Enter a username')
     email = Prompt.ask('\t[x] Enter your email adress')
     main_key = username
@@ -132,14 +132,12 @@ def register():
     encrypted_password, cipher_iv_password = encrypt_password(password, main_key)
     encrypted_email, cipher_iv_email = encrypt_password(email, main_key)
 
-
-
     if password == re_password:
         Passfx_Users_Add(username, main_key, encrypted_email.hex(), cipher_iv_email, encrypted_password.hex(), cipher_iv_password, date_created)
         print(f'\n\t[green]✓  User successfully registered!')
         time.sleep(2)
     else:
-        arts.banner()
+        banner()
         print(f"\t[red] ⚠  Passsword Incorrect, try again...")
         time.sleep(2)
         register()
@@ -149,15 +147,15 @@ def register():
 def main():
     try:
         while True:
-            arts.banner()
-            arts.Start_modules()
+            banner()
+            Start_modules()
             choice = Prompt.ask(f'[yellow]    Enter your choice → ')
             if choice == '1':
                 login()
             elif choice == '2':
                 register()
             elif choice == '3':
-                arts.banner()
+                banner()
                 sql_db_setting()
             elif choice == '4':
                 webbrowser.get('firefox').open('https://github.com/StealthIQ')

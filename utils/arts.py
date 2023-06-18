@@ -5,7 +5,8 @@ from rich.console import Console
 from rich import print as print
 from rich.prompt import Prompt
 import random
-from just_banner import banner_art
+from utils.just_banner import banner_art
+# from just_banner import banner_art
 
 input = Prompt.ask
 
@@ -38,7 +39,7 @@ def Start_modules():
     # time.sleep(5)
 
 #Main Modules
-def Main_modules():
+def Main_modules_arts():
 
     main_menu = f"""    [green][[white]1[green]] PASSWORD MANAGER                                                                        
     [green][[white]2[green]] PASSWORD GENERATOR                                  [red][[white]VERSION[red]] 1.0 (BETA)                          
@@ -48,3 +49,7 @@ def Main_modules():
     # print(Main_modules)
     print(main_menu)
     # time.sleep(5)
+
+if __name__ == "__main__":
+    banner()
+    Main_modules()
