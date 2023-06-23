@@ -1,13 +1,14 @@
 colorama
 crypto
 fade
-getpass
 mysql-connector-python
 nltk
 password-strength
 progressbar
 pyperclip
 pwnedpasswords
-pycrypto
 random-word
 rich
+emoji
+pycryptodome
+getpass
