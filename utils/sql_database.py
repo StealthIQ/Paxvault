@@ -12,7 +12,8 @@ console = Console()
 mydb = mysql.connector.connect(
     host="localhost",
     user="root",
-    passwd="root"
+    passwd="root",
+    auth_plugin='mysql_native_password'
     )
 
 # variable cursor

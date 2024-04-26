@@ -13,7 +13,6 @@ def initiate_db_connection(username):
     )
     return passdb.cursor(), passdb
 
-
 def add_data(username):
     # Connect to the database
     cursor, passdb = initiate_db_connection(username)
@@ -36,18 +35,19 @@ def add_data(username):
     )
     """)
 
+    # Query to insert data into the table
     query = f"""
     INSERT INTO {username}_Table (site_name, site_url, site_username_email, site_password, date_time_created)
     VALUES (%s, %s, %s, %s, %s)
     """
 
+    # Values to be inserted into the table
     values = (site_name, site_url, site_username_email, site_password, date_created)
     cursor.execute(query, values)
 
     passdb.commit()
     cursor.close()
     passdb.close()
-
 
 def get_data(username, print_table=False, get_query=False):
     # Connect to the database
@@ -65,7 +65,6 @@ def get_data(username, print_table=False, get_query=False):
         passdb.close()
         return results
 
-
 def print_table_now(cursor, username):
     # Execute the SQL statement to show the list of tables
     cursor.execute("SHOW TABLES")
@@ -75,7 +74,7 @@ def print_table_now(cursor, username):
     table_names = [table[0] for table in tables]
 
     username_table = f"{username}_Table"
-    if username_table is not None and username_table in table_names:
+    if username_table in table_names:
         # Execute the SQL statement to select all rows from the table
         cursor.execute(f"SELECT * FROM {username_table}")
 
@@ -100,7 +99,6 @@ def print_table_now(cursor, username):
 
         time.sleep(4)
 
-
 # Main Function
 def pass_manager_main(username):
     cursor, passdb = initiate_db_connection(username)
@@ -119,12 +117,19 @@ def pass_manager_main(username):
         get_data(username, print_table=True)
         print("""---------- Get Decrypted password -----------
                                         Enter B to go back""")
-        get_id_site = int(input("Enter the ID of the site: ")) - 1
+        get_id_site = int(input("Enter the ID of the site: "))
         username_query_value = get_data(username, get_query=True)
-        if get_id_site in username_query_value[0]:
-            print("Your Password is:", username_query_value[get_id_site][4])
+        found = False
+        for row in username_query_value:
+            if get_id_site == row[0]:
+                found = True
+                print("Your Password is:", row[4])
+                break
 
+        if not found:
+            print("Site ID not found.")
 
 # Testing the code
 username = input("Enter the username: ")
 pass_manager_main(username)
+

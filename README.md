@@ -1,8 +1,10 @@
 # Paxvault
 
 Paxvault is a command line offline password manager written in Python. It is an open source project that provides a secure and convenient way to manage your passwords. With its AES-256 encryption and various password management modules, Paxvault ensures the utmost security for your sensitive information.
+## Demo
 
-![Paxvault Screenshot](https://i.imgur.com/x2RPn8D.png)
+[![PaxVault CLI
+demo](https://asciinema.org/a/do4mrvnSGnbP01PjuvENwc54h.svg)](https://asciinema.org/a/do4mrvnSGnbP01PjuvENwc54h?autoplay=1)
 
 ## Features
 
@@ -35,32 +37,122 @@ Paxvault is a command line offline password manager written in Python. It is an 
 
 ## Installation
 
-1. Make sure you have the latest version of Python installed by running the following command:
+1. **Check Python Version**: Ensure you have the latest Python version installed:
    ```bash
    python3 --version
    ```
 
-2. Clone the repository, navigate to the project folder, and install the necessary libraries:
+2. **Clone and Install**: Clone the repository, navigate to the project folder, and install the required libraries:
    ```bash
    git clone https://github.com/StealthIQ/Paxvault.git
    cd Paxvault/
    pip install -r requirements.txt
    ```
 
-3. Run the main script to start using Paxvault:
+3. **Linux Users**: For Linux users, streamline the package installation process:
+   ```bash
+   while IFS= read -r line; do pip install "$line"; done < requirements.txt
+   ```
+
+4. **MySQL Installation**: For Arch Linux users, install MySQL server using `paru`:
+   ```shell
+   paru -Sy mysql
+   mysql --version
+   ```
+   
+   For other operating systems, ensure to download the appropriate packages using your package manager.
+## Troubleshooting 
+
+### MySQL Login and Permissions
+- **Login to MySQL**: Access MySQL database:
+  ```bash
+  sudo mysql -u root -p
+  ```
+
+- **Check User Permissions**: Verify user permissions:
+  ```sql
+  SHOW GRANTS FOR 'root'@'localhost'; 
+  ```
+
+- **Grant Permissions**: Grant necessary permissions to users:
+  ```sql
+  GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
+  ```
+
+### Password Reset
+1. **Stop MySQL**: Stop MySQL service:
+   ```bash
+   sudo systemctl stop mariadb
+   ```
+
+2. **Start in Safe Mode**: Start MariaDB in Safe Mode to reset the root user password:
+   ```bash
+   sudo mysqld_safe --skip-grant-tables &
+   ```
+
+3. **Open New Terminal**: Open a new terminal window and access MySQL:
+   ```bash
+   mysql -u root 
+   ```
+
+4. **Reset Password**: Reset the password using one of the following methods:
+   - Using `UPDATE` command:
+     ```sql
+     USE mysql;
+     UPDATE user SET authentication_string=PASSWORD('new_password') WHERE User='root';
+     FLUSH PRIVILEGES;
+     ```
+   - Using `ALTER USER` command:
+     ```sql
+     ALTER USER 'root'@'localhost' IDENTIFIED BY 'new_password';
+     ```
+   - Using `UPDATE` command (for older MySQL versions):
+     ```sql
+     UPDATE user SET password=PASSWORD('new_password') WHERE User='root';
+     ```
+
+   Replace `'new_password'` with your desired password or set it to default `'root'`.
+
+5. **Exit MySQL**: Exit MySQL:
+   ```sql
+   exit;
+   ```
+
+6. **Stop Safe Mode**: Stop MySQL Safe Mode:
+   ```bash
+   sudo systemctl start mariadb
+   ```
+
+7. **Restart Service**: Restart the MySQL service:
+   ```bash
+   sudo systemctl start mysqld
+   ```
+
+## Initialize MySQL
+
+To initialize MySQL in your system:
+
+```bash
+sudo mysql_install_db --user=mysql --basedir=/usr --datadir=/var/lib/mysql
+```
+
+Start the MySQL service:
+
+```bash
+sudo systemctl start mysqld
+```
+
+#### **Run Main Script**: 
+- Finally, run the main script to start using Paxvault:
    ```bash
    python3 main.py
    ```
 
-## Demo
-
-- Soon
-
 ## Roadmap
 
-- [ ] Master brute force attack prevention in the login system.
-- [ ] Implement automatic checks with [haveibeenpwned](https://haveibeenpwned.com/) to identify if your email or passwords have been involved in a data breach.
-
+- [ ] Fix minor bugs
+- [ ] SQL DB Schema 
+- [ ] haveibeenpwned API ratelimit
 ## Project Creation Process
 
 1. **Project Mind Map** 
@@ -70,7 +162,7 @@ Paxvault is a command line offline password manager written in Python. It is an 
 
 ## Feedback
 
-If you have any feedback, please reach out to me at stealthiq@protonmail.com or [twitter](https://twitter.com/StealthIQQ)
+If you have any feedback, please reach out to me at stealthiq[at]protonmail.com or [twitter](https://twitter.com/StealthIQQ)
 
 
 ## Authors
